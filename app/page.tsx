@@ -3,6 +3,7 @@ import {
   getGuestbookMessages,
   type GuestbookDatabase,
 } from "./actions";
+import ClientReadMetric from "./client-read-metric";
 
 type HomeProps = {
   searchParams?: Promise<{
@@ -38,7 +39,7 @@ export default async function Home({ searchParams }: HomeProps) {
           </label>
           <button
             type="submit"
-            className="rounded-md border border-black/20 px-3 py-1 text-xs font-medium hover:bg-black/5 dark:border-white/25 dark:hover:bg-white/10"
+            className="rounded-md border border-black/20 px-3 py-1 text-xs font-medium hover:bg-black/5 dark:border-white/25 dark:hover:bg-white/10 cursor-pointer"
           >
             Switch
           </button>
@@ -85,9 +86,10 @@ export default async function Home({ searchParams }: HomeProps) {
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg font-semibold">Message History</h2>
           <p className="text-xs text-zinc-600 dark:text-zinc-400">
-            Read time ({database}): <span className="font-semibold">{readMs} ms</span>
+            Server read time ({database}): <span className="font-semibold">{readMs} ms</span>
           </p>
         </div>
+        <ClientReadMetric database={selectedDb} />
         {messages.length === 0 ? (
           <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
             No messages yet. Be the first to post.

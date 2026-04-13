@@ -23,7 +23,7 @@ const MAX_MESSAGES = 50;
 const FIREBASE_DB_URL =
   process.env.FIREBASE_DATABASE_URL ?? "https://global-guestbook-default-rtdb.firebaseio.com";
 
-type GuestbookReadResult = {
+export type GuestbookReadResult = {
   messages: GuestbookMessage[];
   readMs: number;
   database: GuestbookDatabase;
