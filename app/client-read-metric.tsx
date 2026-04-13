@@ -6,6 +6,7 @@ import type { GuestbookDatabase } from "./actions";
 type MetricState = {
   endToEndMs: number;
   serverReadMs: number;
+  serverRegion: string;
 };
 
 type Props = {
@@ -20,12 +21,13 @@ export default function ClientReadMetric({ database }: Props) {
     setIsLoading(true);
     const start = performance.now();
     const response = await fetch(`/api/guestbook?db=${database}`, { cache: "no-store" });
-    const payload = (await response.json()) as { readMs: number };
+    const payload = (await response.json()) as { readMs: number; region: string };
 
     requestAnimationFrame(() => {
       setMetric({
         endToEndMs: Number((performance.now() - start).toFixed(2)),
         serverReadMs: Number(payload.readMs.toFixed(2)),
+        serverRegion: payload.region,
       });
       setIsLoading(false);
     });
@@ -58,6 +60,10 @@ export default function ClientReadMetric({ database }: Props) {
         <span className="font-semibold text-foreground">
           {metric ? `${metric.serverReadMs} ms` : "—"}
         </span>
+      </p>
+      <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+        Server region:{" "}
+        <span className="font-semibold text-foreground">{metric?.serverRegion ?? "—"}</span>
       </p>
     </section>
   );

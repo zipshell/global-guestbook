@@ -27,6 +27,7 @@ export type GuestbookReadResult = {
   messages: GuestbookMessage[];
   readMs: number;
   database: GuestbookDatabase;
+  region: string;
 };
 
 export async function addGuestbookMessage(formData: FormData) {
@@ -82,6 +83,8 @@ export async function addGuestbookMessage(formData: FormData) {
 export async function getGuestbookMessages(
   database: GuestbookDatabase = "upstash",
 ): Promise<GuestbookReadResult> {
+  const region = process.env.VERCEL_REGION ?? "local-dev";
+
   if (database === "firebase") {
     const start = performance.now();
     const response = await fetch(`${FIREBASE_DB_URL}/guestbook/messages.json`, {
@@ -90,7 +93,7 @@ export async function getGuestbookMessages(
     const readMs = Number((performance.now() - start).toFixed(2));
 
     if (!response.ok) {
-      return { messages: [], readMs, database };
+      return { messages: [], readMs, database, region };
     }
 
     const entries =
@@ -105,7 +108,7 @@ export async function getGuestbookMessages(
       .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
       .slice(0, MAX_MESSAGES);
 
-    return { messages, readMs, database };
+    return { messages, readMs, database, region };
   }
 
   const start = performance.now();
@@ -150,5 +153,5 @@ export async function getGuestbookMessages(
     })
     .filter((entry): entry is GuestbookMessage => Boolean(entry));
 
-  return { messages, readMs, database };
+  return { messages, readMs, database, region };
 }
